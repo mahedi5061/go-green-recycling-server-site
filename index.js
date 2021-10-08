@@ -31,6 +31,7 @@ client.connect((err) => {
     const shipmentCollection = client.db("go-green-recycling").collection("shipmentInfo");
     const adminCollection = client.db("go-green-recycling").collection("admins");
     const reviewCollection = client.db("go-green-recycling").collection("reviews");
+    const cartShipmentCollection = client.db("go-green-recycling").collection("cartShipmentInfo");
   //add product collection
   app.post("/addProduct", (req, res) => {
     const file = req.files.file;
@@ -74,6 +75,27 @@ app.post('/shipments', (req, res) => {
 
       })
 })
+
+//Shipment Information post for Cart option..
+app.post('/cartProduct', (req, res) => {
+
+  const newOrder = req.body;
+  cartShipmentCollection.insertOne(newOrder)
+      .then(result => {
+
+          res.send(result.insertedCount > 0);
+
+      })
+})
+//Shipment Information get for Cart option..
+
+app.get('/showCartOrder', (req, res) => {
+  cartShipmentCollection.find({ email: req.query.email })
+      .toArray((err, items) => {
+          res.send(items)
+      })
+})
+
 //Order Information matching by Id..
 app.get('/product/:id', (req, res) => {
   productCollection.find({ _id: ObjectId(req.params.id) })
