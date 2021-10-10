@@ -81,7 +81,8 @@ client.connect((err) => {
   app.post("/shipments", (req, res) => {
     const newOrder = req.body;
     console.log(newOrder);
-    shipmentCollection.insertOne(newOrder).then((result) => {
+    shipmentCollection.insertOne(newOrder)
+    .then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
@@ -166,7 +167,7 @@ client.connect((err) => {
         console.log("email is empty");
       }
 
-      shipmentCollection.find({}).toArray((err, documents) => {
+      cartShipmentCollection.find({}).toArray((err, documents) => {
         res.send(documents);
       });
     });
