@@ -14,15 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(fileUpload());
-
-const admin = require("firebase-admin");
-
-var serviceAccount = require("./go-green-recycling-firebase-adminsdk-g8oba-77f95b308a.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
+ 
 const port = process.env.PORT || 7000;
 
 app.get("/", (req, res) => {
@@ -97,31 +89,13 @@ client.connect((err) => {
   //Shipment Information get for Cart option..
 
   app.get("/showCartOrder", (req, res) => {
-    const bearer = req.headers.authorization;
-    if (bearer && bearer.startsWith("Bearer ")) {
-      const idToken = bearer.split(" ")[1];
-      
-      // idToken comes from the client app
-      admin
-        .auth()
-        .verifyIdToken(idToken)
-        .then((decodedToken) => {
-          const uid = decodedToken.uid;
-          console.log(uid);
-            if(uid){
+     
               cartShipmentCollection.find({ email: req.query.email })
               .toArray((err, items) => {
-                console.log(items);
                   res.send(items)
               })
-            }
-        })
-        .catch((error) => {
-          // Handle error
-        });
-    }
-  });
-
+            })
+ 
   //Order Information matching by Id..
   app.get("/product/:id", (req, res) => {
     productCollection
@@ -138,9 +112,7 @@ client.connect((err) => {
               .toArray((err, items) => {
                   res.send(items)
               })
-            
-
-   
+    
   });
 
   //post a admin.
